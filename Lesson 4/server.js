@@ -1,5 +1,6 @@
 const http = require('http'),
-      fs = require('fs');
+      fs = require('fs'),
+      url = require('url');
 
 function loadAlbumList(callback) {
     fs.readdir('albums', (err, files) => {
@@ -27,7 +28,8 @@ function loadAlbumList(callback) {
     });
 }
 
-function loadAlbum(albumName, callback) {
+function loadAlbum(albumName, page, pageSize, callback) {
+
     fs.readdir('albums/' + albumName, (err, files) => {
         if (err) {
             if (err.code === 'ENOENT') {
@@ -41,9 +43,12 @@ function loadAlbum(albumName, callback) {
 
             const iterator = (index) => {
                 if (index === files.length) {
+                    const start = page * pageSize;
+                    const output = photos.slice(start, start + pageSize);
+
                     const obj = {
                         short_name: albumName,
-                        photos: photos
+                        photos: output
                     };
                     callback(null, obj);
                     return;
@@ -64,11 +69,15 @@ function loadAlbum(albumName, callback) {
 }
 
 function handleIncomingRequest(req, res) {
-    console.log(`INCOMING REQUEST: ${req.method} ${req.url}`);
 
-    if (req.url === '/albums.json') {
+    req.parsed_url = url.parse(req.url, true);
+    const core_url = req.parsed_url.pathname;
+
+    console.log(`INCOMING REQUEST: ${req.method} ${core_url}`);
+
+    if (core_url === '/albums.json') {
         handleLoadAlbumList(req, res);
-    } else if (req.url.substr(0, 7) === '/albums' && req.url.substr(req.url.length - 5) === '.json') {
+    } else if (core_url.substr(0, 7) === '/albums' && core_url.substr(core_url.length - 5) === '.json') {
         handleLoadAlbum(req, res);
     } else {
         send_failure(res, 404, {code: `no_such_page`, message: `No such page`});
@@ -86,7 +95,17 @@ function handleLoadAlbumList(req, res) {
 }
 
 function handleLoadAlbum(req, res) {
-    loadAlbum(req.url.substr(7, req.url.length - 12), (err, photos) => {
+
+    const params = req.parsed_url.query;
+    let pageNum = params.page ? parseInt(params.page) - 1: 0;
+    let pageSize = params.page_size ? parseInt(params.page_size) : 1000;
+
+    if (isNaN(pageNum)) pageNum = 0;
+    if (isNaN(pageSize)) pageSize = 1000;
+
+    const core_url = req.parsed_url.pathname;
+
+    loadAlbum(core_url.substr(7, core_url.length - 12), pageNum, pageSize, (err, photos) => {
         if (err) {
             send_failure(res, 500, err);
         } else {
