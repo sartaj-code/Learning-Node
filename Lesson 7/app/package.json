@@ -1,0 +1,9 @@
+{
+  "name": "photo-sharing-app",
+  "description": "Photo Sharing Express app",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "express": "^4.14.1"
+  }
+}
