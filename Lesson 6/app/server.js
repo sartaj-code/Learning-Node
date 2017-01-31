@@ -17,7 +17,10 @@ function loadAlbumList(callback) {
 
                 fs.stat('albums/' + files[index], (err, stats) => {
                     if (stats.isDirectory()) {
-                        dirs.push(files[index]);
+                        dirs.push({
+                            album_name: files[index],
+                            title: files[index]
+                        });
                     }
 
                     iterator(index + 1);
