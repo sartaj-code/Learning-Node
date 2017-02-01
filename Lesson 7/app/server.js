@@ -32,6 +32,9 @@ app.get('/templates/:file_name', function (req, res) {
 });
 
 app.get('/pages/:page_name', page_mgr.servePage);
+app.get('/pages/admin/home', verify_admin, page_mgr.servePage);
+app.get('/pages/:page_name/:sub_page', page_mgr.servePage);
+
 
 app.get('*', function (req, res) {
     send_failure(res, 404, {code: `no_such_page`, message: `No such page`});
@@ -39,6 +42,19 @@ app.get('*', function (req, res) {
 
 app.listen(8080);
 
+
+function verify_admin(req, res, next) {
+    console.log("verify_admin");
+    if (isAdmin()) {
+        next();
+    } else {
+        send_failure(res, 403, { code: "permission_denied", message: `You can't do that!` });
+    }
+}
+
+function isAdmin() {
+    return false;
+}
 
 function serveStaticFile(filename, res) {
     console.log(filename);
