@@ -1,0 +1,1 @@
+curl -i -H "Expect:" --form 'file-to-upload=@test.jpg' --form file-info=hello http://localhost:8080/uploadtest
