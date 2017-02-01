@@ -4,8 +4,8 @@ const express = require('express'),
 
 const app = express();
 
-app.get('/albums.json', handleLoadAlbumList);
-app.get('/albums/:album_name.json', handleLoadAlbum);
+app.get('/v1/albums.json', handleLoadAlbumList);
+app.get('/v1/albums/:album_name.json', handleLoadAlbum);
 
 app.get('/content/:file_name', function (req, res) {
     serveStaticFile('content/' + req.params.file_name, res);
