@@ -6,6 +6,20 @@ const express = require('express'),
 
 const app = express();
 
+app.use(require('morgan')('dev'));
+app.use(require('response-time')());
+
+// Custom middleware
+// app.use(function (req, res, next) {
+//     if (req.url === '/STOP') {
+//         res.end("STOPPED!\n");
+//     } else {
+//         console.log(`Don't stop!!\n`);
+//         next();
+//     }
+// });
+
+
 app.get('/v1/albums.json', album_mgr.albumList);
 app.get('/v1/albums/:album_name.json', album_mgr.loadAlbum);
 
