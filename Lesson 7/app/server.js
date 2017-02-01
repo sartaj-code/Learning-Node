@@ -8,6 +8,7 @@ const app = express();
 
 app.use(require('morgan')('dev'));
 app.use(require('response-time')());
+app.use(express.static(__dirname + "/public"));
 
 // Custom middleware
 // app.use(function (req, res, next) {
@@ -22,14 +23,6 @@ app.use(require('response-time')());
 
 app.get('/v1/albums.json', album_mgr.albumList);
 app.get('/v1/albums/:album_name.json', album_mgr.loadAlbum);
-
-app.get('/content/:file_name', function (req, res) {
-    serveStaticFile('content/' + req.params.file_name, res);
-});
-
-app.get('/templates/:file_name', function (req, res) {
-    serveStaticFile('templates/' + req.params.file_name, res);
-});
 
 app.get('/pages/:page_name', page_mgr.servePage);
 app.get('/pages/admin/home', verify_admin, page_mgr.servePage);
@@ -54,42 +47,6 @@ function verify_admin(req, res, next) {
 
 function isAdmin() {
     return false;
-}
-
-function serveStaticFile(filename, res) {
-    console.log(filename);
-
-    const rs = fs.createReadStream(filename);
-    const ct = contentTypeForPath(filename);
-
-    res.writeHead(200, { 'Content-Type': ct });
-
-    rs.on('error', (err) => {
-        console.log("ERROR: on read stream");
-
-        res.writeHead(404, { 'Content-Type': 'application/json' });
-
-        const out = {
-            error: "not_found",
-            message: `${filename} was not found`
-        };
-
-        res.end(JSON.stringify(out) + '\n');
-    });
-
-    rs.pipe(res);
-}
-
-function contentTypeForPath (filename) {
-    const ext = path.extname(filename);
-
-    switch (ext.toLowerCase()) {
-        case '.html': return 'text/html';
-        case '.css': return 'text/css';
-        case '.js': return 'application/json';
-        case '.jpg': case '.jpeg': return 'image/jeg';
-        default: return 'text/plain';
-    }
 }
 
 function make_response_error(err) {
