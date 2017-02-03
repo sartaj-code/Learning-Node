@@ -1,3 +1,6 @@
+#
+# Lesson 10.1
+#
 
 # Append to log file both regular and error output
 node simple.js >> simple.logs 2>&1
@@ -19,3 +22,15 @@ done
 - run script
 - detach using Ctrl-a Ctr-d
 - re-attach to terminal using screen -r
+
+#
+# Lesson 10.2
+#
+
+# If node is using too much memory, kill and restart process. Find
+# process id and memory being used (RSS aka Resident Memory Size)
+pgrep -n -f "node simple.js"
+ps wux <pid> | awk 'NR>1' | awk '{print $6}'
+
+# Run node-ninja-runner script
+sh node-ninja-runner.sh
