@@ -1,0 +1,21 @@
+
+# Append to log file both regular and error output
+node simple.js >> simple.logs 2>&1
+
+# See everything that's happening
+node simple.js 2>&1 | tee simple.logs
+
+# See everything that's happening and append
+node simple.js 2>&1 | tee -a simple.logs
+
+# Keep node server running forever
+while true
+do
+node simple.js 2>&1 | tee -a simple.logs
+done
+
+# Use screen to keep remote terminal active when using ssh
+- screen
+- run script
+- detach using Ctrl-a Ctr-d
+- re-attach to terminal using screen -r
