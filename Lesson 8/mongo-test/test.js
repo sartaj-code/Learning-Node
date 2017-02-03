@@ -169,7 +169,7 @@ async.waterfall([
     function (callback) {
         db.collection('albums', callback);
     },
-    
+
     function (albums, callback) {
         albumsCollection = albums;
         db.collection('photos', callback);
@@ -179,11 +179,11 @@ async.waterfall([
         photosCollection = photos;
         callback(null);
     },
-    
+
     function (callback) {
         albumsCollection.insertMany([a1, a2, a3], callback);
     },
-    
+
     function (inserted, callback) {
         console.log('Inserted albums!');
         photosCollection.insertMany(pix, callback);
@@ -197,21 +197,79 @@ async.waterfall([
             filename: 'photo_003.jpg',
             albumid: 'australia2010'
         }, {
-            $set: { description: 'Look at them kangaroos!' }
+            $set: {description: 'Look at them kangaroos!'}
         }, callback);
     },
 
     function (results, callback) {
-        console.log(results);
+        // let cursor = albumsCollection.find();
 
-        // Perform delete
-        photosCollection.deleteMany({
-            albumid: 'australia2010'
-        }, callback);
-    },
+        // 1. All documents
+        // cursor.toArray(callback);
 
-    function (callback) {
-        callback(null);
+        // 2. Each document
+        // cursor.each((err, document) => {
+        //     if (err) {
+        //         callback(err);
+        //     } else if (!document) {
+        //         callback(null)
+        //     } else {
+        //         console.log(document)
+        //     }
+        // });
+
+        // 3. Use cursor as a stream
+        // cursor.on('data', (document) => {
+        //     console.log(document);
+        // });
+        //
+        // cursor.on('error', callback);
+        //
+        // cursor.on('end', () => {
+        //     callback(null);
+        // });
+
+        // 4. Find by specific fields
+        // let cursor = photosCollection.find({ albumid: 'italy2012', filename: 'picture_02.jpg' });
+        //
+        // cursor.on('data', (document) => {
+        //     console.log(document);
+        // });
+        //
+        // cursor.on('error', callback);
+        //
+        // cursor.on('end', () => {
+        //     callback(null);
+        // });
+
+        // 5. Find by regular expression
+        // let cursor = albumsCollection.find({ date: { $regex: /^2010/ }});
+        //
+        // cursor.on('data', (document) => {
+        //     console.log(document);
+        // });
+        //
+        // cursor.on('error', callback);
+        //
+        // cursor.on('end', () => {
+        //     callback(null);
+        // });
+
+        // 6. Sort by ascending values (descending uses -1), skip first 3, limit to 3 documents
+        let cursor = photosCollection.find({albumid: 'italy2012'})
+            .sort({filename: 1})
+            .skip(3)
+            .limit(3);
+
+        cursor.on('data', (document) => {
+            console.log(document);
+        });
+
+        cursor.on('error', callback);
+
+        cursor.on('end', () => {
+            callback(null);
+        });
     }
 
 ], function (err, results) {
