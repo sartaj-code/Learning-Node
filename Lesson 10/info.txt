@@ -34,3 +34,11 @@ ps wux <pid> | awk 'NR>1' | awk '{print $6}'
 
 # Run node-ninja-runner script
 sh node-ninja-runner.sh
+
+#
+# Lesson 10.5
+#
+
+# Run memcached as non-superuser
+sudo memcached -d -u daemon -p 12321 -m 25
+ps ax | grep memcached
