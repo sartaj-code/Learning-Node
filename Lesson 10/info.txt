@@ -55,3 +55,12 @@ curl -X GET -H "HOST: app1" localhost:8080
 127.0.0.1   app2
 127.0.0.3§  app3
 curl -X GET app1:8080
+
+#
+# Lesson 10.6
+#
+
+# Generate local private keys for https
+openssl genrsa -out privkey.pem 1024
+openssl req -new -key privkey.pem -out certreq.csr
+openssl x509 -req -days 3650 -in certreq.csr -signkey privkey.pem -out newcert.pem
