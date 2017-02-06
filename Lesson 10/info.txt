@@ -42,3 +42,16 @@ sh node-ninja-runner.sh
 # Run memcached as non-superuser
 sudo memcached -d -u daemon -p 12321 -m 25
 ps ax | grep memcached
+
+#
+# Lesson 10.6
+#
+
+# Using Express as a virtual host - test Host header with curl
+curl -X GET -H "HOST: app1" localhost:8080
+
+# Updating /etc/hosts file
+127.0.0.1   app1
+127.0.0.1   app2
+127.0.0.3§  app3
+curl -X GET app1:8080
