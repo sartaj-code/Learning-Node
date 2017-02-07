@@ -64,3 +64,16 @@ curl -X GET app1:8080
 openssl genrsa -out privkey.pem 1024
 openssl req -new -key privkey.pem -out certreq.csr
 openssl x509 -req -days 3650 -in certreq.csr -signkey privkey.pem -out newcert.pem
+
+#
+# Lesson 10.10
+#
+
+# For use on multiple platforms, prefer to use a local-config.js for directory paths,
+# port numbers, database urls, etc.
+
+# Use 'path' module and path.sep for use pathnames on multiple platforms
+const components = ['..', '..', 'static', 'content'];
+components.join(path.sep)   // '../../static/content'
+
+# Use process.platform to determine which platform we're running on
